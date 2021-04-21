@@ -6,14 +6,20 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 
 public class CarParking  {
-    private final int amountOfParkingSpaces;
-    public final Semaphore carAmountControllerSemaphore;
-    private final List<Car> parkingSpaces;
 
+    //amount of parking space
+    private final int amountOfParkingSpaces;
     public int getAmountOfParkingSpaces(){
         return amountOfParkingSpaces;
     }
 
+    //semaphore to control amount of cars
+    public final Semaphore carAmountControllerSemaphore;
+
+    //parking spaces
+    private final List<Car> parkingSpaces;
+
+    //constructor
     public CarParking(int amountOfParkingSpaces){
         this.amountOfParkingSpaces = amountOfParkingSpaces;
         carAmountControllerSemaphore = new Semaphore(this.amountOfParkingSpaces, false);
@@ -21,16 +27,21 @@ public class CarParking  {
         formParkingSpaces(this.amountOfParkingSpaces);
     }
 
+
+    //parking spaces formation
     private void formParkingSpaces(int amountOfParkingSpaces){
         for(int i = 0; i < amountOfParkingSpaces; i++){
             parkingSpaces.add(null);
         }
     }
 
+
+    //check is there empty space
     public boolean hasEmptySpace(){
         return parkingSpaces.contains(null);
     }
 
+    //park car if possible return space number else return -1
     public int parkCar(Car car){
         for(int i = 0; i < amountOfParkingSpaces; i++){
             if(parkingSpaces.get(i) == null){
@@ -41,6 +52,7 @@ public class CarParking  {
         return -1;
     }
 
+    //drive away car
     public void parkOffCar(Car car){
         for(int i = 0; i < amountOfParkingSpaces; i++){
             if(parkingSpaces.get(i) == car){
@@ -49,6 +61,7 @@ public class CarParking  {
         }
     }
 
+    //try to swap cars, if possible return true, else return false
     public boolean trySwap(Car car){
         for(int i = 0; i < parkingSpaces.size(); i++){
             if(parkingSpaces.get(i)!=null && car.equals(parkingSpaces.get(i))){

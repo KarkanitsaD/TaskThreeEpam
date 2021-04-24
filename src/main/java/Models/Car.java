@@ -1,9 +1,15 @@
 package Models;
 
+import org.apache.logging.log4j.spi.LoggerContextShutdownAware;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Car extends Thread{
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Car.class);
 
     //define is the car want to swap
     public boolean wantsSwap = false;
@@ -29,9 +35,12 @@ public class Car extends Thread{
 
     //constructor
     public Car(int id){
+
         System.out.println("Создание машины с id = " + id);
         this.id = id;
         locker = new ReentrantLock();
+
+        LOGGER.info("Creating car - " + this);
     }
 
 
@@ -50,6 +59,9 @@ public class Car extends Thread{
     //life of thread
     @Override
     public void run(){
+
+        LOGGER.info("Car - " + id + " started run");
+
         System.out.println("Машина-"+id+" подъехала к парковке");
         int waitingTime = getWaitingTime();
 
@@ -70,7 +82,7 @@ public class Car extends Thread{
                     int spaceNumber = carParking.parkCar(this);
                     System.out.println("Машина-" + id + " припарковалась на месте " + spaceNumber);
                 }catch (Exception e){
-                    e.printStackTrace();
+                    LOGGER.error("Exception: ", e);
                 }finally {
                     locker.unlock();
                 }
@@ -95,7 +107,7 @@ public class Car extends Thread{
                 try {
                     carParking.parkOffCar(this);
                 }catch (Exception e){
-                    e.printStackTrace();
+                    LOGGER.error("Exception: ", e);
                 }finally {
                     locker.unlock();
                 }
@@ -109,7 +121,7 @@ public class Car extends Thread{
                 System.out.println("Машина-"+id+" не дождалась места и уехала");
             }
         }catch (InterruptedException e){
-            e.printStackTrace();
+            LOGGER.error("Exception: ", e);
         }
     }
 
